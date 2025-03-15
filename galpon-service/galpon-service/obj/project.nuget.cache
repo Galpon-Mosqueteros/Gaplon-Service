@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "GXWesWe7KvufegjEx0Hk4iOvrPZPDnn/NOL5798VbzwysP6Juqq491WiaqhAYuH8ZA0QznJbV4DJ+/eQOBV3fQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Tilinaso\\Desktop\\galpon\\galpon-service\\galpon-service\\galpon-service.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Tilinaso\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\Tilinaso\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\Tilinaso\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\Tilinaso\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\Tilinaso\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\Tilinaso\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
