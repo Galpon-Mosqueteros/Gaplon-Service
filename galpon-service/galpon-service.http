@@ -1,6 +1,0 @@
-@galpon_service_HostAddress = http://localhost:5180
-
-GET {{galpon_service_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
