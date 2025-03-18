@@ -18,15 +18,4 @@ public class AuditableAbstractAggregateRoot<T extends AbstractAggregateRoot<T>> 
     @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Getter
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private Date createdAt;
-
-    @Getter
-    @LastModifiedDate
-    @Column(nullable = false)
-    private Date updatedAt;
-
 }

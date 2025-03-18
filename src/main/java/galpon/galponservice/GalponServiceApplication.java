@@ -2,12 +2,12 @@ package galpon.galponservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
+@EnableJpaRepositories("galpon.galponservice.iam.domain.repositories")
 public class GalponServiceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(GalponServiceApplication.class, args);
     }
-
 }
