@@ -40,10 +40,19 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) {
-        Email email = new Email(request.getEmail());
+        Email email;
+        try {
+            email = new Email(request.getEmail());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Formato de email inválido");
+        }
 
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new RuntimeException("El correo ya está registrado");
+        }
+
+        if (request.getPassword().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
         }
 
         User user = new User(

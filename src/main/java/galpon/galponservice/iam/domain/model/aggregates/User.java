@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Getter
-@NoArgsConstructor
 @Entity
 @Table(name = "usuario")
 public class User implements UserDetails {
@@ -35,6 +34,8 @@ public class User implements UserDetails {
     private Password password;
 
     private String nombreGalpon;
+
+    public User(){}
 
     public User(String nombre, String apellido, Email email, Password password, String nombreGalpon) {
         this.nombre = nombre;

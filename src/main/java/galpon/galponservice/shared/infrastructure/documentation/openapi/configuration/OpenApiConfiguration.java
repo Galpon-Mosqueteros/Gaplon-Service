@@ -24,13 +24,13 @@ public class OpenApiConfiguration {
         var openApi = new OpenAPI();
         openApi
                 .info(new Info()
-                        .title("SafeDrive API - UPC")
-                        .description("SafeDrive application REST API documentation.")
+                        .title("Galpon - API")
+                        .description("Galpon application REST API documentation.")
                         .version("v1.0.0")
                         .license(new License().name("Apache 2.0")
                                 .url("https://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
-                        .description("SafeDrive Landing Page")
+                        .description("Galpon Landing Page")
                         .url(""));
 
         final String securitySchemeName = "bearerAuth";
