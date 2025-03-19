@@ -55,7 +55,7 @@ public class AuthService {
         );
 
         userRepository.save(user);
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getUsername());
         return new AuthResponse(token);
     }
 
