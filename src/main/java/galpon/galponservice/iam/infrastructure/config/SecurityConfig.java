@@ -5,6 +5,7 @@ import galpon.galponservice.iam.infrastructure.security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -30,13 +31,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para pruebas
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/api/birds/**"
-                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/birds").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/birds").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/birds/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/birds/**").authenticated()
+                        .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
