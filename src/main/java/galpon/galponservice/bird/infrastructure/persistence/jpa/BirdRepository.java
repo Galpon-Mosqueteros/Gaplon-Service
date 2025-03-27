@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BirdRepository extends JpaRepository<Bird, Long> {
-    boolean existByPlaca(String placa);
+    boolean existsByPlaca(String placa);
 
-    List<Bird> findByUser(User user);
+    List<Bird> findByUsuario_Id(Long id);
+
+    Optional<Bird> findByPlaca(String placa);
 }

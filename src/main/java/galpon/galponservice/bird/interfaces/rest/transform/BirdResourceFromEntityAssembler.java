@@ -5,7 +5,12 @@ import galpon.galponservice.bird.interfaces.rest.resources.BirdResource;
 
 public class BirdResourceFromEntityAssembler {
     public static BirdResource toResourceFromEntity(Bird bird) {
-        return new BirdResource(bird.getId(), bird.getPlaca(), bird.getNombre(), bird.getTipo(), bird.getColor(),
-                bird.getPeso(), bird.getEstado(), bird.getFechaNacimiento(), bird.getFechaMuerte());
+        return new BirdResource(
+                bird.getId(), bird.getPlaca(), bird.getNombre(), bird.getTipo(),
+                bird.getColor(), bird.getPeso(), bird.getEstado(),
+                bird.getFechaNacimiento(), bird.getFechaMuerte(),
+                bird.getPadre() != null ? bird.getPadre().getPlaca() : null,
+                bird.getMadre() != null ? bird.getMadre().getPlaca() : null
+        );
     }
 }

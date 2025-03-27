@@ -5,6 +5,7 @@ import galpon.galponservice.bird.domain.model.aggregates.TipoAve;
 
 import java.util.Date;
 
-public record BirdResource(Integer id, String placa, String nombre, TipoAve tipo,
-                           String color, Double peso, EstadoAve estado, Date fechaNacimiento, Date fechaMuerte) {
+public record BirdResource(Long id, String placa, String nombre, TipoAve tipo,
+                           String color, Double peso, EstadoAve estado, Date fechaNacimiento,
+                           Date fechaMuerte, String placaPadre, String placaMadre) {
 }

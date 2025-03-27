@@ -31,21 +31,30 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String authHeader = request.getHeader("Authorization");
 
+        System.out.println("Método: " + request.getMethod() + " | URL: " + request.getRequestURI());
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("No se encontró el token en la cabecera o formato incorrecto");
             chain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
         String email = jwtUtil.extractUsername(token);
+        System.out.println("Token extraído: " + token);
+        System.out.println("Usuario extraído: " + email);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            System.out.println("Usuario encontrado en UserDetailsService");
 
             if (jwtUtil.validateToken(token, email)) {
+                System.out.println("Token válido. Autenticando usuario...");
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                System.out.println("Token invalido");
             }
         }
 

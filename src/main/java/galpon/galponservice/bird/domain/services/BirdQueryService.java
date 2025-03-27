@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface BirdQueryService {
     Optional<Bird> handle(GetBirdByPlacaQuery query);
-    List<Bird> getBirdsByUser(String id);
+    List<Bird> getBirdsByUserId(Long userId);
+    Optional<Bird> getBirdById(Long id);
 }

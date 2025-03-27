@@ -6,5 +6,7 @@ import galpon.galponservice.bird.domain.model.aggregates.TipoAve;
 import java.util.Date;
 
 public record UpdateBirdResource(String placa, String nombre, TipoAve tipo,
-                                 String color, Double peso, EstadoAve estado, Date fechaNacimiento, Date fechaMuerte) {
+                                 String color, Double peso, EstadoAve estado,
+                                 Date fechaNacimiento, Date fechaMuerte,
+                                 String placaPadre, String placaMadre) {
 }

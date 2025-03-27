@@ -5,23 +5,26 @@ import galpon.galponservice.iam.application.internal.dto.AuthResponse;
 import galpon.galponservice.iam.application.internal.dto.LoginRequest;
 import galpon.galponservice.iam.application.internal.dto.RegisterRequest;
 import galpon.galponservice.iam.application.internal.exceptions.EmailAlreadyExistsException;
+import galpon.galponservice.iam.domain.model.aggregates.User;
+import galpon.galponservice.iam.domain.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
+    private final UserRepository userRepository;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserRepository userRepository) {
         this.authService = authService;
+        this.userRepository = userRepository;
     }
 
     @Operation(summary = "Registrar usuario", description = "Registra un nuevo usuario en el sistema")
@@ -51,4 +54,11 @@ public class AuthController {
     public Map<String, String> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
         return Map.of("error", e.getMessage());
     }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }

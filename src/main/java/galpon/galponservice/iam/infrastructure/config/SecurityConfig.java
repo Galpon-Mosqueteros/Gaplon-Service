@@ -31,10 +31,11 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para pruebas
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**",  // Permitir autenticación (registro y login)
+                                "/api/auth/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/api/birds/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

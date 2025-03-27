@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface BirdCommandService {
     Optional<Bird> handle(UpdateBirdCommand updateBirdCommand);
-    Optional<Bird> handle(CreateBirdCommand createBirdCommand);
+    Optional<Bird> handle(CreateBirdCommand createBirdCommand, Long id);
     void handle(DeleteBirdCommand deleteBirdCommand);
 }

@@ -1,5 +1,6 @@
 package galpon.galponservice.iam.domain.model.aggregates;
 
+import galpon.galponservice.bird.domain.model.aggregates.Bird;
 import galpon.galponservice.iam.domain.model.valueobjects.Email;
 import galpon.galponservice.iam.domain.model.valueobjects.Password;
 import jakarta.persistence.*;
@@ -7,8 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Entity
@@ -16,7 +20,7 @@ import java.util.Collections;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String nombre;
     private String apellido;
@@ -35,6 +39,13 @@ public class User implements UserDetails {
 
     private String nombreGalpon;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bird> birds = new ArrayList<>();
+
+    public List<Bird> getBirds() {
+        return birds;
+    }
+
     public User(){}
 
     public User(String nombre, String apellido, Email email, Password password, String nombreGalpon) {
@@ -43,6 +54,10 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.nombreGalpon = nombreGalpon;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
