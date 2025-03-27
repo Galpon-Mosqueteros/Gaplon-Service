@@ -1,5 +1,6 @@
 package galpon.galponservice.bird.domain.model.aggregates;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import galpon.galponservice.bird.domain.model.commands.CreateBirdCommand;
 import galpon.galponservice.iam.domain.model.aggregates.User;
 import jakarta.persistence.*;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Setter
@@ -43,10 +45,12 @@ public class Bird {
 
     @NotNull
     @Column(nullable = false)
-    private Date fechaNacimiento;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate fechaNacimiento;
 
     @Column(nullable = true)
-    private Date fechaMuerte;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate fechaMuerte;
 
     @ManyToOne
     @JoinColumn(name = "placa_padre", referencedColumnName = "placa", nullable = true, foreignKey = @ForeignKey(name = "fk_ave_padre"))
@@ -61,7 +65,7 @@ public class Bird {
     private User usuario;
 
     public Bird(String placa, String nombre, TipoAve tipo, String color, Double peso,
-                EstadoAve estado, Date fechaNacimiento, Date fechaMuerte, Bird padre, Bird madre, User usuario) {
+                EstadoAve estado, LocalDate fechaNacimiento, LocalDate fechaMuerte, Bird padre, Bird madre, User usuario) {
         this.placa = placa;
         this.nombre = nombre;
         this.tipo = tipo;
@@ -91,7 +95,7 @@ public class Bird {
 
 
     public Bird updateInformation(String placa, String nombre, TipoAve tipo, String color, Double peso,
-                                  EstadoAve estado, Date fechaNacimiento, Date fechaMuerte) {
+                                  EstadoAve estado, LocalDate fechaNacimiento, LocalDate fechaMuerte) {
         this.placa = placa;
         this.nombre = nombre;
         this.tipo = tipo;
@@ -112,8 +116,8 @@ public class Bird {
     public String getColor() { return color; }
     public Double getPeso() { return peso; }
     public EstadoAve getEstado() { return estado; }
-    public Date getFechaNacimiento() { return fechaNacimiento; }
-    public Date getFechaMuerte() { return fechaMuerte; }
+    public LocalDate getFechaNacimiento() { return fechaNacimiento; }
+    public LocalDate getFechaMuerte() { return fechaMuerte; }
     public Bird getPadre() { return padre; }
     public Bird getMadre() { return madre; }
     public Long getUsuario() { return usuario != null ? usuario.getId() : null; }
