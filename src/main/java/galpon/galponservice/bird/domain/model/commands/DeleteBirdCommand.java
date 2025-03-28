@@ -1,9 +1,9 @@
 package galpon.galponservice.bird.domain.model.commands;
 
-public record DeleteBirdCommand(String placa) {
+public record DeleteBirdCommand(Long id) {
     public DeleteBirdCommand {
-        if (placa == null) {
-            throw new NullPointerException("placa no puede ser null");
+        if (id == null) {
+            throw new NullPointerException("id no puede ser null");
         }
     }
 }

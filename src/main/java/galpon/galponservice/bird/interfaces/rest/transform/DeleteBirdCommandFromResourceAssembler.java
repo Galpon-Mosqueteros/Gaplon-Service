@@ -5,6 +5,6 @@ import galpon.galponservice.bird.interfaces.rest.resources.DeleteBirdResource;
 
 public class DeleteBirdCommandFromResourceAssembler {
     public static DeleteBirdCommand toCommandFromResource(DeleteBirdResource resource) {
-        return new DeleteBirdCommand(resource.placa());
+        return new DeleteBirdCommand(resource.id());
     }
 }

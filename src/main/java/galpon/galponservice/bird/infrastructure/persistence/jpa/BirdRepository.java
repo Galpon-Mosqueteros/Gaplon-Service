@@ -14,5 +14,7 @@ public interface BirdRepository extends JpaRepository<Bird, Long> {
 
     List<Bird> findByUsuario_Id(Long id);
 
+    Optional<Bird> findById(Long id);
+
     Optional<Bird> findByPlaca(String placa);
 }

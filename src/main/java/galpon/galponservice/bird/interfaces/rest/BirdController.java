@@ -14,6 +14,9 @@ import galpon.galponservice.bird.interfaces.rest.transform.UpdateBirdCommandFrom
 import galpon.galponservice.iam.domain.model.aggregates.User;
 import galpon.galponservice.iam.domain.model.valueobjects.Email;
 import galpon.galponservice.iam.domain.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,20 +39,8 @@ public class BirdController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<BirdResource> createBird(@RequestBody CreateBirdResource resource, Principal principal) {
-        String username = principal.getName();
-        Optional<User> user = userRepository.findByEmail(new Email(username));
-        if (user.isEmpty()) return ResponseEntity.notFound().build();
-
-        Long userId = user.get().getId();
-        Optional<Bird> bird = birdCommandService
-                .handle(CreateBirdCommandFromResourceAssembler.toCommandFromResource(resource), userId);
-
-        return bird.map(source -> new ResponseEntity<>(BirdResourceFromEntityAssembler.toResourceFromEntity(source), CREATED))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
+    @Operation(summary = "Consultar aves",
+            description = "Brinda una lista de los datos de las aves que tiene el usuario")
     @GetMapping
     public ResponseEntity<List<BirdResource>> getBirdsByUserId(Principal principal) {
         String username = principal.getName();
@@ -61,29 +52,82 @@ public class BirdController {
         return ResponseEntity.ok(birds.stream().map(BirdResourceFromEntityAssembler::toResourceFromEntity).toList());
     }
 
-
-    @PutMapping("{birdId}")
-    public ResponseEntity<BirdResource> updateBird(@PathVariable Long birdId, @RequestBody UpdateBirdResource resource, Principal principal) {
+    @Operation(summary = "Actualizar un ave",
+            description = "Modifica los datos de un ave existente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ave actualizada exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Error en los datos de entrada"),
+            @ApiResponse(responseCode = "404", description = "Usuario o ave no encontrada")
+    })
+    @PostMapping
+    public ResponseEntity<?> createBird(@RequestBody CreateBirdResource resource, Principal principal) {
         String username = principal.getName();
         Optional<User> user = userRepository.findByEmail(new Email(username));
-        if (user.isEmpty()) return ResponseEntity.notFound().build();
+        if (user.isEmpty()) {
+            return ResponseEntity.status(404).body("Usuario no encontrado");
+        }
 
-        var updateBirdCommand = UpdateBirdCommandFromResourceAssembler.toCommandFromResource(birdId, resource);
-        var updatedBird = birdCommandService.handle(updateBirdCommand);
+        Long userId = user.get().getId();
+        try {
+            Optional<Bird> bird = birdCommandService
+                    .handle(CreateBirdCommandFromResourceAssembler.toCommandFromResource(resource), userId);
 
-        if (updatedBird.isEmpty()) return ResponseEntity.badRequest().build();
-
-        var birdResource = BirdResourceFromEntityAssembler.toResourceFromEntity(updatedBird.get());
-        return ResponseEntity.ok(birdResource);
+            if (bird.isPresent()) {
+                BirdResource birdResource = BirdResourceFromEntityAssembler.toResourceFromEntity(bird.get());
+                return ResponseEntity.status(CREATED).body(birdResource);
+            } else {
+                return ResponseEntity.status(400).body("No se pudo registrar el ave");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
-    @DeleteMapping("{placa}")
-    public ResponseEntity<Void> deleteBird(@PathVariable String placa) {
+    @Operation(summary = "Actualizar un ave",
+            description = "Modifica los datos de un ave existente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ave actualizada exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Error en los datos de entrada"),
+            @ApiResponse(responseCode = "404", description = "Usuario o ave no encontrada")
+    })
+    @PutMapping("{birdId}")
+    public ResponseEntity<?> updateBird(@PathVariable Long birdId, @RequestBody UpdateBirdResource resource, Principal principal) {
+        String username = principal.getName();
+        Optional<User> user = userRepository.findByEmail(new Email(username));
+        if (user.isEmpty()) {
+            return ResponseEntity.status(404).body("Usuario no encontrado");
+        }
+
         try {
-            birdCommandService.handle(new DeleteBirdCommand(placa));
+            var updateBirdCommand = UpdateBirdCommandFromResourceAssembler.toCommandFromResource(birdId, resource);
+            var updatedBird = birdCommandService.handle(updateBirdCommand);
+
+            if (updatedBird.isPresent()) {
+                BirdResource birdResource = BirdResourceFromEntityAssembler.toResourceFromEntity(updatedBird.get());
+                return ResponseEntity.ok(birdResource);
+            } else {
+                return ResponseEntity.status(400).body("No se pudo actualizar el ave");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+
+
+    @Operation(summary = "Eliminar un ave por ID",
+            description = "Elimina un ave usando su ID. Si el ave no existe, devuelve un error.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "El ave se eliminó correctamente"),
+            @ApiResponse(responseCode = "404", description = "El ave no fue encontrada")
+    })
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteBird(@PathVariable Long id) {
+        try {
+            birdCommandService.handle(new DeleteBirdCommand(id));
             return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException a) {
-            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("El ave con ID " + id + " no fue encontrada");
         }
     }
 }

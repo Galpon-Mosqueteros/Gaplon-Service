@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Setter;
 
+import java.text.Bidi;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -121,4 +122,7 @@ public class Bird {
     public Bird getPadre() { return padre; }
     public Bird getMadre() { return madre; }
     public Long getUsuario() { return usuario != null ? usuario.getId() : null; }
+
+    public void setPadre(Bird padre) { this.padre = padre; }
+    public void setMadre(Bird madre) { this.madre = madre; }
 }

@@ -1,9 +1,9 @@
 package galpon.galponservice.bird.interfaces.rest.resources;
 
-public record DeleteBirdResource(String placa) {
+public record DeleteBirdResource(Long id) {
     public DeleteBirdResource {
-        if (placa == null) {
-            throw new IllegalArgumentException("placa is null");
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
         }
     }
 }

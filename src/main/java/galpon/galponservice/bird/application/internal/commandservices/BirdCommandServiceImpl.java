@@ -1,6 +1,7 @@
 package galpon.galponservice.bird.application.internal.commandservices;
 
 import galpon.galponservice.bird.domain.model.aggregates.Bird;
+import galpon.galponservice.bird.domain.model.aggregates.TipoAve;
 import galpon.galponservice.bird.domain.model.commands.CreateBirdCommand;
 import galpon.galponservice.bird.domain.model.commands.DeleteBirdCommand;
 import galpon.galponservice.bird.domain.model.commands.UpdateBirdCommand;
@@ -29,26 +30,57 @@ public class BirdCommandServiceImpl implements BirdCommandService {
     public Optional<Bird> handle(CreateBirdCommand command, Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-        Bird bird = new Bird(command, user, null, null);
 
+        Bird padre = null, madre = null;
+
+        if (command.placaPadre() != null) {
+            padre = birdRepository.findByPlaca(command.placaPadre())
+                    .filter(b -> b.getUsuario().equals(id))
+                    .orElseThrow(() -> new IllegalArgumentException("El padre no pertenece al usuario o no existe"));
+            if (padre.getTipo() != TipoAve.Gallo) throw new IllegalArgumentException("El padre debe ser un Gallo");
+        }
+
+        if (command.placaMadre() != null) {
+            madre = birdRepository.findByPlaca(command.placaMadre())
+                    .filter(b -> b.getUsuario().equals(id))
+                    .orElseThrow(() -> new IllegalArgumentException("La madre no pertenece al usuario o no existe"));
+            if (madre.getTipo() != TipoAve.Gallina) throw new IllegalArgumentException("La madre debe ser una Gallina");
+        }
+
+        Bird bird = new Bird(command, user, padre, madre);
         return Optional.of(birdRepository.save(bird));
     }
 
     @Override
     public Optional<Bird> handle(UpdateBirdCommand command) {
         validateUpdateBirdCommand(command);
-        var result = birdRepository.findById(command.id());
-        if (result.isEmpty()) {
-            throw new IllegalArgumentException("El ave no existe");
+
+        Bird birdToUpdate = birdRepository.findById(command.id())
+                .orElseThrow(() -> new IllegalArgumentException("El ave no existe"));
+
+        Bird padre = null, madre = null;
+
+        if (command.placaPadre() != null) {
+            padre = birdRepository.findByPlaca(command.placaPadre())
+                    .filter(b -> b.getUsuario().equals(birdToUpdate.getUsuario()))
+                    .orElseThrow(() -> new IllegalArgumentException("El padre no pertenece al usuario o no existe"));
+            if (padre.getTipo() != TipoAve.Gallo) throw new IllegalArgumentException("El padre debe ser un Gallo");
         }
-        var birdToUpdate = result.get();
-        try {
-            var updatedBird = birdRepository.save(birdToUpdate.updateInformation(command.placa(), command.nombre(), command.tipo(),
-                    command.color(), command.peso(), command.estado(), command.fechaNacimiento(), command.fechaMuerte()));
-            return Optional.of(updatedBird);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("No se pudo actualizar el ave");
+
+        if (command.placaMadre() != null) {
+            madre = birdRepository.findByPlaca(command.placaMadre())
+                    .filter(b -> b.getUsuario().equals(birdToUpdate.getUsuario()))
+                    .orElseThrow(() -> new IllegalArgumentException("La madre no pertenece al usuario o no existe"));
+            if (madre.getTipo() != TipoAve.Gallina) throw new IllegalArgumentException("La madre debe ser una Gallina");
         }
+
+        var updatedBird = birdToUpdate.updateInformation(command.placa(), command.nombre(), command.tipo(),
+                command.color(), command.peso(), command.estado(), command.fechaNacimiento(), command.fechaMuerte());
+
+        updatedBird.setPadre(padre);
+        updatedBird.setMadre(madre);
+
+        return Optional.of(birdRepository.save(updatedBird));
     }
 
     void validateUpdateBirdCommand(UpdateBirdCommand command) {
@@ -80,7 +112,7 @@ public class BirdCommandServiceImpl implements BirdCommandService {
 
     @Override
     public void handle(DeleteBirdCommand command) {
-        Optional<Bird> bird = birdRepository.findByPlaca(command.placa());
+        Optional<Bird> bird = birdRepository.findById(command.id());
         if (bird.isPresent()) {
             birdRepository.delete(bird.get());
         } else {
