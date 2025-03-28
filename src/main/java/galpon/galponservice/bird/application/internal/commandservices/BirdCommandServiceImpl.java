@@ -1,6 +1,7 @@
 package galpon.galponservice.bird.application.internal.commandservices;
 
 import galpon.galponservice.bird.domain.model.aggregates.Bird;
+import galpon.galponservice.bird.domain.model.aggregates.EstadoAve;
 import galpon.galponservice.bird.domain.model.aggregates.TipoAve;
 import galpon.galponservice.bird.domain.model.commands.CreateBirdCommand;
 import galpon.galponservice.bird.domain.model.commands.DeleteBirdCommand;
@@ -47,6 +48,14 @@ public class BirdCommandServiceImpl implements BirdCommandService {
             if (madre.getTipo() != TipoAve.Gallina) throw new IllegalArgumentException("La madre debe ser una Gallina");
         }
 
+        if (command.estado() != EstadoAve.Muerto && command.fechaMuerte() != null) {
+            throw new IllegalArgumentException("No puedes asignar fecha de muerte si el ave no está muerta");
+        }
+
+        if (command.estado() == EstadoAve.Muerto && command.fechaMuerte() == null) {
+            throw new IllegalArgumentException("Si el ave está muerta, debe tener una fecha de muerte");
+        }
+
         Bird bird = new Bird(command, user, padre, madre);
         return Optional.of(birdRepository.save(bird));
     }
@@ -72,6 +81,14 @@ public class BirdCommandServiceImpl implements BirdCommandService {
                     .filter(b -> b.getUsuario().equals(birdToUpdate.getUsuario()))
                     .orElseThrow(() -> new IllegalArgumentException("La madre no pertenece al usuario o no existe"));
             if (madre.getTipo() != TipoAve.Gallina) throw new IllegalArgumentException("La madre debe ser una Gallina");
+        }
+
+        if (command.estado() != EstadoAve.Muerto && command.fechaMuerte() != null) {
+            throw new IllegalArgumentException("No puedes asignar fecha de muerte si el ave no está muerta");
+        }
+
+        if (command.estado() == EstadoAve.Muerto && command.fechaMuerte() == null) {
+            throw new IllegalArgumentException("Si el ave está muerta, debe tener una fecha de muerte");
         }
 
         var updatedBird = birdToUpdate.updateInformation(command.placa(), command.nombre(), command.tipo(),
