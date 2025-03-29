@@ -23,12 +23,6 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @GetMapping("/{userId}/birds")
     public ResponseEntity<List<BirdResource>> getBirdsByUserId(@PathVariable Long userId) {
         Optional<User> user = userRepository.findById(userId);
