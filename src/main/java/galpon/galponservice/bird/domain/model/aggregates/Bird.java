@@ -3,6 +3,7 @@ package galpon.galponservice.bird.domain.model.aggregates;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import galpon.galponservice.bird.domain.model.commands.CreateBirdCommand;
 import galpon.galponservice.iam.domain.model.aggregates.User;
+import galpon.galponservice.observation.domain.model.aggregates.Observation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,9 @@ import lombok.Setter;
 
 import java.text.Bidi;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Entity
@@ -64,6 +67,13 @@ public class Bird {
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "fk_ave_usuario"))
     private User usuario;
+
+    @OneToMany(mappedBy = "ave", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Observation> observations = new ArrayList<>();
+
+    public List<Observation> getObservations() {
+        return observations;
+    }
 
     public Bird(String placa, String nombre, TipoAve tipo, String color, Double peso,
                 EstadoAve estado, LocalDate fechaNacimiento, LocalDate fechaMuerte, Bird padre, Bird madre, User usuario) {

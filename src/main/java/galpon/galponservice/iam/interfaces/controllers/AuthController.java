@@ -54,11 +54,4 @@ public class AuthController {
     public Map<String, String> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
         return Map.of("error", e.getMessage());
     }
-
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
 }

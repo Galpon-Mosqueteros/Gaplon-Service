@@ -5,6 +5,7 @@ import galpon.galponservice.bird.domain.model.aggregates.Bird;
 import galpon.galponservice.bird.domain.model.commands.DeleteBirdCommand;
 import galpon.galponservice.bird.domain.services.BirdCommandService;
 import galpon.galponservice.bird.domain.services.BirdQueryService;
+import galpon.galponservice.bird.infrastructure.persistence.jpa.BirdRepository;
 import galpon.galponservice.bird.interfaces.rest.resources.BirdResource;
 import galpon.galponservice.bird.interfaces.rest.resources.CreateBirdResource;
 import galpon.galponservice.bird.interfaces.rest.resources.UpdateBirdResource;
@@ -14,6 +15,9 @@ import galpon.galponservice.bird.interfaces.rest.transform.UpdateBirdCommandFrom
 import galpon.galponservice.iam.domain.model.aggregates.User;
 import galpon.galponservice.iam.domain.model.valueobjects.Email;
 import galpon.galponservice.iam.domain.repositories.UserRepository;
+import galpon.galponservice.observation.domain.model.aggregates.Observation;
+import galpon.galponservice.observation.interfaces.rest.resources.ObservationResource;
+import galpon.galponservice.observation.interfaces.rest.transform.ObservationResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -32,11 +36,13 @@ public class BirdController {
     private final BirdCommandService birdCommandService;
     private final BirdQueryService birdQueryService;
     private final UserRepository userRepository;
+    private final BirdRepository birdRepository;
 
-    public BirdController(BirdCommandService birdCommandService, BirdQueryService birdQueryService, UserRepository userRepository) {
+    public BirdController(BirdCommandService birdCommandService, BirdQueryService birdQueryService, UserRepository userRepository, BirdRepository birdRepository) {
         this.birdCommandService = birdCommandService;
         this.birdQueryService = birdQueryService;
         this.userRepository = userRepository;
+        this.birdRepository = birdRepository;
     }
 
     @Operation(summary = "Consultar aves",
@@ -52,7 +58,7 @@ public class BirdController {
         return ResponseEntity.ok(birds.stream().map(BirdResourceFromEntityAssembler::toResourceFromEntity).toList());
     }
 
-    @Operation(summary = "Actualizar un ave",
+    @Operation(summary = "Agregar un ave",
             description = "Modifica los datos de un ave existente.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ave actualizada exitosamente"),
@@ -129,5 +135,15 @@ public class BirdController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body("El ave con ID " + id + " no fue encontrada");
         }
+    }
+
+    @GetMapping("/{birdId}/observations")
+    public ResponseEntity<BirdResource> getBirdById(@PathVariable Long birdId) {
+        Optional<Bird> bird = birdRepository.findById(birdId);
+        if (bird.isEmpty()) return ResponseEntity.notFound().build();
+
+        BirdResource birdResource = BirdResourceFromEntityAssembler.toResourceFromEntity(bird.get());
+
+        return ResponseEntity.ok(birdResource);
     }
 }
